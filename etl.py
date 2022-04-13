@@ -7,37 +7,44 @@ from sql_queries import *
 
 def process_song_file(cur, filepath):
     # open song file
-    df = 
+    df = pd.read_json(filepath, lines=True)
 
     # insert song record
-    song_data = 
+    song_data = {"song_id": df.song_id, "title": df.title, "artist_id": df.artist_id, "year": df.year, "duration": df.duration}
+    song_data = pd.DataFrame(song_data)
+    song_data = song_data.values[0].tolist()
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = 
+    artist_data = artist_data = {"artist_id": df.artist_id, "name": df.artist_name, "location": df.artist_location, "latitude": df.artist_latitude, "longitude": df.artist_longitude}
+    artist_data = pd.DataFrame(artist_data)
+    artist_data = artist_data.values[0].tolist()
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
     # open log file
-    df = 
+    df = pd.read_json(filepath, lines=True)
 
     # filter by NextSong action
-    df = 
+    df['timestamp'] = pd.to_datetime(df['ts'])
 
     # convert timestamp column to datetime
-    t = 
+    t = pd.DataFrame(df['timestamp'])
     
     # insert time data records
-    time_data = 
-    column_labels = 
-    time_df = 
+    time_data = {"start_time": t['timestamp'], "hour": t['timestamp'].dt.hour, "day": t['timestamp'].dt.day, "month":t['timestamp'].dt.month, "year": t['timestamp'].dt.year, "weekday": t['timestamp'].dt.weekday}
+    time_df = time_df = pd.DataFrame(data=time_data)
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    user_df = 
+    user_id = pd.to_numeric(df['userId'],  errors='coerce')
+    print(user_id)
+    
+    user_df = {'user_id': pd.to_numeric(df['userId'],  errors='coerce'), 'first_name': df['firstName'], 'last_name': df['lastName'], 'gender': df['gender'], 'level': df['level']}
+    user_df = pd.DataFrame(user_df)
 
     # insert user records
     for i, row in user_df.iterrows():
@@ -56,7 +63,7 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = 
+        songplay_data = (row.timestamp, row.userId, row.level, songid,artistid,row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
