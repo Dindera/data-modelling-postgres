@@ -27,9 +27,10 @@ def process_log_file(cur, filepath):
     df = pd.read_json(filepath, lines=True)
 
     # filter by NextSong action
-    df['timestamp'] = pd.to_datetime(df['ts'])
-
+    df = df[df['page']=="NextSong"]
+    
     # convert timestamp column to datetime
+    df['timestamp'] = pd.to_datetime(df['ts'])
     t = pd.DataFrame(df['timestamp'])
     
     # insert time data records
@@ -40,10 +41,7 @@ def process_log_file(cur, filepath):
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    user_id = pd.to_numeric(df['userId'],  errors='coerce')
-    print(user_id)
-    
-    user_df = {'user_id': pd.to_numeric(df['userId'],  errors='coerce'), 'first_name': df['firstName'], 'last_name': df['lastName'], 'gender': df['gender'], 'level': df['level']}
+    user_df = {'user_id': df['userId'], 'first_name': df['firstName'], 'last_name': df['lastName'], 'gender': df['gender'], 'level': df['level']}
     user_df = pd.DataFrame(user_df)
 
     # insert user records
