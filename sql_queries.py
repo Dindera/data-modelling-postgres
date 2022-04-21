@@ -81,16 +81,7 @@ songplay_table_insert = ("""INSERT INTO songplays
                         useragent
             )
             VALUES
-            (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s
-            )
+            (%s,%s,%s,%s,%s,%s,%s,%s)
 ON conflict
             (
                         songplay_id
@@ -107,18 +98,13 @@ user_table_insert = ("""INSERT INTO users
                         level
             )
             VALUES
-            (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s
+            (%s,%s, %s,%s,%s
             )
 ON conflict
             (
                         user_id
             )
-            do update set level = excluded.level || users.level
+            do update set level = excluded.level
 """)
 
 song_table_insert = ("""INSERT INTO songs
@@ -130,12 +116,7 @@ song_table_insert = ("""INSERT INTO songs
                         duration
             )
             VALUES
-            (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s
+            (%s,%s,%s,%s,%s
             )
 ON conflict
             (
@@ -153,12 +134,7 @@ artist_table_insert = ("""INSERT INTO artists
                         longitude
             )
             VALUES
-            (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s
+            (%s,%s,%s,%s,%s
             )
 ON conflict
             (
@@ -178,13 +154,7 @@ time_table_insert = ("""INSERT INTO time
                         weekday
             )
             VALUES
-            (
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s,
-                        %s
+            (%s,%s,%s, %s,%s,%s
             )
 ON conflict
             (
@@ -201,9 +171,9 @@ SELECT s.song_id,
 FROM   songs s
        join artists a
          ON s.artist_id = a.artist_id
-WHERE  s.title = 'I Didn''t Mean To'
-       AND a.name = 'Casual'
-       AND s.duration = 218.93179; """)
+WHERE  s.title = %s
+       AND a.name = %s
+       AND s.duration = %s;""")
 
 # QUERY LISTS
 
